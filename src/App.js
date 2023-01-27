@@ -5,14 +5,14 @@ import icon from './images/3157972.avif';
 
 const Icon = css`
   display: flex;
-  width: 70px;
+  width: 100px;
   margin-right: 5px;
 `;
 
 const heading = css`
   display: flex;
   justify-content: center;
-  padding-top: 100px;
+  padding-top: 50px;
   font-family: Georgia, Times, 'Times New Roman', serif;
   font-weight: bold;
 `;
@@ -26,14 +26,14 @@ const formStyle = css`
   background-color: #3d9970;
   margin: 20px 20% 0 20%;
   input {
-    margin-right: 20px;
-    line-height: 30px;
+    margin-right: 50px;
+    line-height: 10px;
     box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.03);
   }
   label {
     margin-right: 5px;
-    line-height: 40px;
-    font-weight: 600;
+    line-height: 50px;
+    font-weight: 100;
   }
   button {
     text-transform: uppercase;
@@ -42,7 +42,7 @@ const formStyle = css`
     border-radius: 5px;
     background-color: blueviolet;
     color: white;
-    font-weight: 700;
+    font-weight: 100;
     cursor: pointer;
   }
 `;
@@ -51,8 +51,7 @@ const attendingGuestList = css`
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-    'Lucida Sans', Arial, sans-serif;
+  font-family: 'monospace', 'fantasy', 'Serif', Arial, sans-serif;
   font-size: 20px;
   list-style-type: none;
   background: #b4d0c3;
@@ -68,13 +67,12 @@ const attendingGuestList = css`
     border-radius: 5px;
     background-color: red;
     color: white;
-    font-weight: 200;
+    font-weight: 100;
     cursor: pointer;
   }
 `;
-
 function App() {
-  const baseUrl = 'https://';
+  const baseUrl = '';
   const [guestList, setGuestList] = useState([]);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -97,68 +95,19 @@ function App() {
   }, []);
 
   // Add a new guest to the list.
-  async function addGuest(event) {
-    event.preventDefault();
-    const response = await fetch(`${baseUrl}/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        firstName: firstName,
-        lastName: lastName,
-      }),
-    });
-    const newGuest = await response.json();
-    console.log(newGuest);
-    // Copy array and add new data
-    const newGuestInfo = [...guestList];
-    newGuestInfo.push(newGuest);
-    setGuestList(newGuestInfo);
-    setFirstName('');
-    setLastName('');
-  }
+
+  // Copy array and add new data
 
   // Update a guest.
-  async function patchGuest(guest) {
-    const response = await fetch(`${baseUrl}/${guest.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ attending: guest.attending }),
-    });
-    const updatedGuest = await response.json();
-    console.log(updatedGuest);
-  }
 
   // Remove guest.
-  async function removeGuest(id) {
-    const response = await fetch(`${baseUrl}/${id}`, {
-      method: 'DELETE',
-    });
-    const deletedGuest = await response.json();
-    console.log(deletedGuest);
-    const guestToDelete = guestList.filter((guest) => guest.id !== id);
-    setGuestList(guestToDelete);
-    console.log(deletedGuest);
-  }
-
-  function handleAttending(id, attendance) {
-    const newGuestsLists = [...guestList];
-    const attendingGuest = newGuestsLists.find((guest) => guest.id === id);
-    attendingGuest.attending = attendance;
-    patchGuest(attendingGuest);
-    setGuestList(newGuestsLists);
-  }
 
   return (
     <div>
       <div css={heading}>
-        <img src={icon} alt="Guest-list-icon" css={icon} />
+        <img src={Icon} alt="Guest-list-icon" css={icon} />
         <h1>React Guest List</h1>
       </div>
-      <span>{loading ? 'Guest List is loading...' : ''}</span>
       <form css={formStyle}>
         <label htmlFor="firstName">First name: </label>
         <input
@@ -174,41 +123,14 @@ function App() {
           disabled={loading}
           onChange={(e) => setLastName(e.currentTarget.value)}
         />
-
         <button
           onClick={(e) => {
             setFirstName(firstName);
             setLastName(lastName);
-            addGuest(e);
           }}
-        >
-          Add Guest
-        </button>
+        ></button>
       </form>
-      <ul css={attendingGuestList}>
-        {guestList.map((guest) => {
-          return (
-            <li key={guest.id}>
-              {guest.firstName} {guest.lastName}{' '}
-              <input
-                type="checkbox"
-                id="attending"
-                checked={guest.attending}
-                onChange={(e) => {
-                  handleAttending(guest.id, e.currentTarget.checked);
-                }}
-              />
-              <label
-                css={{ fontSize: 10, marginRight: 10 }}
-                htmlFor="attending"
-              >
-                Attending
-              </label>
-              <button onClick={() => removeGuest(guest.id)}>Remove</button>
-            </li>
-          );
-        })}
-      </ul>
+      <ul css={attendingGuestList}></ul>
     </div>
   );
 }
